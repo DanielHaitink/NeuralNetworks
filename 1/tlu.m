@@ -2,9 +2,12 @@
 % Daniel Haitink & Job Talle
 
 % Matrix
-inputTable = [0,0; 1,0; 0,1; 1,1];
+inputTable = [0,0; 0,1; 1,0; 1,1];
+input1 = [0.1,0.1; 0.1,0.9; 0.9,0.1; 0.9,0.9];
+input2 = [0.2,0.2; 0.2,0.8; 0.8,0.2; 0.8,0.8];
 andSolution = [0; 0; 0; 1];
 orSolution = [0; 1; 1; 1];
+nandSolution = [1;1;1;0];
 
 % Parameters
 learn_rate = 0.1;    % the learning rate
@@ -12,14 +15,12 @@ n_epochs = 100;      % the number of epochs we want to train
 
 % Define the inputs
 examples = inputTable;
-sumX = sum(examples);
 
 % Define the corresponding target outputs
-goal = andSolution;
+goal = nandSolution;
 
 % Initialize the weights and the threshold
 weights = randi([0 1], 1, 2);
-summed_input = sumX(1)*weights(1)+sumX(2)*weights(2);
 threshold = 0; 
 
 % Preallocate vectors for efficiency. They are used to log your data 
@@ -41,7 +42,7 @@ for epoch = 1:n_epochs
     for pattern = 1:n_examples
         
         % Initialize weighted sum of inputs
-        summed_input = sumX*weights';
+        summed_input = examples(pattern,:)*weights';
         
         % Subtract threshold from weighted sum
         summed_input = summed_input-threshold;
@@ -54,15 +55,15 @@ for epoch = 1:n_epochs
        
         
         % Compute error
-        error = goal(pattern) - output;
-        
+        error = output - goal(pattern);
+        q = learn_rate * (goal(pattern)-output);
         % Compute delta rule
-        delta_weights = 0;
-        delta_threshold = 0;
+        delta_weights = q*examples(pattern,:);
+        delta_threshold = -q;
         
         % Update weights and threshold
-        weights = 0;
-        threshold = 0;        
+        weights = weights + delta_weights;
+        threshold = threshold + delta_threshold;        
     
         % Store squared error
         epoch_error(pattern) = error.^2;
