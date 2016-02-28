@@ -74,17 +74,17 @@ while ~stop_criterium
         hidden_error = output_error * w_output;        
         
         % Compute local gradient of hidden layer
-        local_gradient_hidden = d_sigmoid(hidden_activation) .* (local_gradient_output * w_output)';
+        local_gradient_hidden = d_sigmoid(hidden_activation) .* (local_gradient_output * w_output);
         
         % Compute the delta rule for the output
         delta_output = learn_rate * local_gradient_output' * hidden_output ;
         
         % Compute the delta rule for the hidden units;
-        delta_hidden = learn_rate * local_gradient_hidden' * input_data(pattern, :);
+        delta_hidden = learn_rate * local_gradient_hidden' * input_data(patter, :);
         
         % Update the weight matrices
         w_hidden = w_hidden + delta_hidden';
-        w_output = w_output + delta_output';
+        w_output = w_output + delta_output;
         
         % Store data
         epoch_error = epoch_error + (output_error).^2;        

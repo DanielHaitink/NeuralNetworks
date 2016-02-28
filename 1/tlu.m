@@ -17,7 +17,7 @@ n_epochs = 100;      % the number of epochs we want to train
 examples = inputTable;
 
 % Define the corresponding target outputs
-goal = nandSolution;
+goal = andSolution;
 
 % Initialize the weights and the threshold
 weights = randi([0 1], 1, 2);
