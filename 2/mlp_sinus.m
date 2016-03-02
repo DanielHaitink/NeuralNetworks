@@ -9,12 +9,12 @@ goal = sin(examples);
 
 % Boolean for plotting animation
 plot_animation = true;
-plot_bigger_picture = false;
+plot_bigger_picture = true;
 
 % Parameters for the network
 learn_rate = 0.1;                % learning rate
 max_epoch = 5000;              % maximum number of epochs
-
+min_error = 0.02;
 
 mean_weight = 0;
 weight_spread = 1;
@@ -50,7 +50,44 @@ while ~stop_criterium
     epoch_delta_hidden = 0;
     epoch_delta_output = 0;
     for pattern = 1:size(input_data,1)
-       % Copy the for-loop body from mlp_2011.m
+       % Compute the activation in the hidden layer
+        hidden_activation = input_data(pattern, :) * w_hidden;
+        
+        % Compute the output of the hidden layer (don't modify this)
+        hidden_output = sigmoid(hidden_activation);
+        
+        % Compute the activation of the output neurons
+        output_activation = hidden_output * w_output;
+        
+        % Compute the output
+        output = output_function(output_activation);
+        
+        % Compute the error on the output
+        output_error = goal(pattern) - output;
+        
+        % Compute local gradient of output layer
+        local_gradient_output = d_output_function(output_activation) .* output_error;
+        
+        % Compute the error on the hidden layer (backpropagate)
+        hidden_error = output_error * w_output;        
+        
+        % Compute local gradient of hidden layer
+        local_gradient_hidden = d_sigmoid(hidden_activation) .* (local_gradient_output * w_output)';
+        
+        % Compute the delta rule for the output
+        delta_output = learn_rate * local_gradient_output' * hidden_output ;
+        
+        % Compute the delta rule for the hidden units;
+        delta_hidden = learn_rate * local_gradient_hidden' * input_data(pattern, :);
+        
+        % Update the weight matrices
+        w_hidden = w_hidden + delta_hidden';
+        w_output = w_output + delta_output';
+        
+        % Store data
+        epoch_error = epoch_error + (output_error).^2;        
+        epoch_delta_output = epoch_delta_output + sum(sum(abs(delta_output)));
+        epoch_delta_hidden = epoch_delta_hidden + sum(sum(abs(delta_hidden)));
     end
     
     h_error(epoch) = epoch_error / size(input_data,1);
@@ -62,6 +99,9 @@ while ~stop_criterium
     end
     
     % Add your stop criterion here
+    if min_error >= epoch_error
+        stop_criterium = 1;
+    end
     
     % Plot the animation
     if and((mod(epoch,20)==0),(plot_animation))
