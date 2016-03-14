@@ -30,6 +30,19 @@ pooledFeatures = zeros(convolvedDim / poolDim, ...
 %   Use mean pooling here.
 
 %%% Add code here
+for i=1:numImages
+    for f = 1:numFilters
+        convolvedFeatures(:,:,f,i);
+        for x = 1:(convolvedDim/poolDim)
+           for y = 1:(convolvedDim/poolDim)
+               kernelX = (x-1)*2+1;
+               kernelY = (y-1)*2+1;
+               pooledFeatures(x,y,f,i) = mean2(convolvedFeatures(kernelX:kernelX+(poolDim-1),kernelY:kernelY+(poolDim-1),f,i));
+           end
+        end
+    end
+    
+end
 
 end
 

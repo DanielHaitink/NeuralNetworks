@@ -37,5 +37,19 @@ convolvedFeatures = zeros(convDim, convDim, numFilters, numImages);
 
 %%% Add code here
 
+for i = 1:numImages
+    im = images(:,:,i);
+    
+    for f = 1:numFilters
+        currentFilter = W(:,:,f);
+        for x = 1:convDim
+           for y = 1:convDim
+               convolvedFeatures(x,y,f, i) = conv2(rot90(currentFilter), im(x:x+filterDim-1, y:y+filterDim-1), 'valid');
+           end
+        end
+    end
+    
+end
+
 end
 
