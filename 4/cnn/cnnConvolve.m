@@ -44,11 +44,14 @@ for i = 1:numImages
         currentFilter = W(:,:,f);
         for x = 1:convDim
            for y = 1:convDim
-               convolvedFeatures(x,y,f, i) = conv2(rot90(currentFilter), im(x:x+filterDim-1, y:y+filterDim-1), 'valid');
+               convolvedFeatures(x,y,f,i) = conv2(rot90(currentFilter), im(x:x+filterDim-1, y:y+filterDim-1), 'valid');
+               convolvedFeatures(x,y,f,i) = convolvedFeatures(x,y,f,i) + b(f,1);
+               convolvedFeatures(x,y,f,i) = 1/(1+exp(-convolvedFeatures(x,y,f,i)));
            end
         end
+        %convolvedFeatures(:,:,f,i) = convolvedFeatures(:,:,f,i) + b(f,1);
+        %convolvedFeatures(:,:,f,i) = 1/(1+exp(-convolvedFeatures(:,:,f,i)));
     end
-    
 end
 
 end
