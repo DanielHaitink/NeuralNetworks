@@ -35,8 +35,8 @@ for i=1:numImages
         convolvedFeatures(:,:,f,i);
         for x = 1:(convolvedDim/poolDim)
            for y = 1:(convolvedDim/poolDim)
-               kernelX = (x-1)*2+1;
-               kernelY = (y-1)*2+1;
+               kernelX = (x-1)*poolDim+1;
+               kernelY = (y-1)*poolDim+1;
                pooledFeatures(x,y,f,i) = mean2(convolvedFeatures(kernelX:kernelX+(poolDim-1),kernelY:kernelY+(poolDim-1),f,i));
            end
         end
