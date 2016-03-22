@@ -78,7 +78,7 @@ activationsPooled = cnnPool(poolDim, activations);
 % Reshape activations into 2-d matrix, hiddenSize x numImages,
 % for Softmax layer
 %%% REPLACE THE FOLLOWING LINE %%%
-activationsPooled = reshape(activationsPooled,[2000,256]);
+activationsPooled = reshape(activationsPooled,[numClasses*numFilters*outputDim,numImages]);
 
 %% Softmax Layer
 %  Forward propagate the pooled activations calculated above into a
@@ -91,10 +91,10 @@ activationsPooled = reshape(activationsPooled,[2000,256]);
 
 %%% COMPUTE THE SOFTMAX OUTPUT %%%
 probs = zeros(numClasses,numImages);
-Y_wx=Wd*activationsPooled;
-Y_wxb = bsxfun(@plus, Y_wx, bd);
-Y_num(:,:) = exp(Y_wxb(:,:));
-probs = bsxfun(@rdivide,Y_num,sum(Y_num,1));
+probs=Wd*activationsPooled;
+probs = bsxfun(@plus, probs, bd);
+probs = exp(probs);
+probs = bsxfun(@rdivide,probs,sum(probs,1));
 %%======================================================================
 %% STEP 1b: Calculate Cost
 %  In this step you will use the labels given as input and the probs
